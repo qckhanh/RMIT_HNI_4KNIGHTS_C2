@@ -1,0 +1,15 @@
+{
+  "name": "countersign-mockbank",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server.mjs",
+    "dev:attest": "tsx watch server.mjs --attest"
+  },
+  "dependencies": {
+    "@tideorg/js": "0.14.29"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15"
+  }
+}

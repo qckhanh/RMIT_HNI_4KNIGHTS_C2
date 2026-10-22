@@ -3,7 +3,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check": "tsx src/payments.check.ts",
+    "dev:attest": "tsx watch src/server.ts --attest"
   },
   "type": "module",
   "private": true,

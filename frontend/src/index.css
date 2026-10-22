@@ -109,3 +109,24 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Countersign desk */
+:root { --ok: #11703b; --bad: #b3261e; --wait: #8a5a00; }
+@media (prefers-color-scheme: dark) { :root { --ok: #4ade80; --bad: #f87171; --wait: #fbbf24; } }
+
+.desk { text-align: left; padding: 0 16px 32px; display: grid; gap: 20px; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.panel { border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: grid; gap: 12px; }
+.panel h2 { margin: 0; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end; }
+.form label { display: grid; gap: 4px; font-size: 14px; }
+.form input, .form select { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text-h); }
+button { font: inherit; font-size: 15px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--accent-border); background: var(--accent-bg); color: var(--text-h); cursor: pointer; }
+button:disabled { opacity: 0.5; cursor: default; }
+.table { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.ok { color: var(--ok); } .bad { color: var(--bad); } .wait { color: var(--wait); }
+.muted { font-size: 13px; }
+.alert { color: var(--bad); }

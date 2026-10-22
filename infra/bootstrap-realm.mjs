@@ -27,6 +27,7 @@ const REALM = 'countersign';
 const CLIENT = 'countersign-frontend';
 const APP_URL = 'http://localhost:5173';
 const ADAPTER_OUTPUT = path.join(root, 'frontend', 'public', 'tidecloak.json');
+const ADMIN_POLICY_OUTPUT = path.join(root, 'frontend', 'public', 'admin-policy.b64');
 const INVITES_OUTPUT = path.join(here, 'data', 'invite-links.txt'); // gitignored: links are credentials
 const ADMIN_USER = process.env.KC_BOOTSTRAP_ADMIN_USERNAME ?? 'admin';
 const ADMIN_PASS = process.env.KC_BOOTSTRAP_ADMIN_PASSWORD;
@@ -240,6 +241,14 @@ async function exportAdapter() {
   if (!adapter.json?.jwk) die(`adapter export has no jwk: ${adapter.text.slice(0, 200)}`);
   fs.writeFileSync(ADAPTER_OUTPUT, JSON.stringify(adapter.json, null, 2) + '\n');
   console.log(`    wrote ${path.relative(root, ADAPTER_OUTPUT)}`);
+
+  // The realm's signed admin policy authorises network signatures on new policies (the payment
+  // attestations). It is a signed public artefact, like the adapter; re-export after admins change.
+  const adminPolicy = (await api('GET', `/${REALM}/iga/role-policies/name/tide-realm-admin`)).json;
+  if (adminPolicy?.policy) {
+    fs.writeFileSync(ADMIN_POLICY_OUTPUT, adminPolicy.policy + '\n');
+    console.log(`    wrote ${path.relative(root, ADMIN_POLICY_OUTPUT)} (threshold ${adminPolicy.threshold})`);
+  }
 }
 
 async function finish() {

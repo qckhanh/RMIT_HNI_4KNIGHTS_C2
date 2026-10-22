@@ -1,0 +1,5 @@
+INVOICE MP-2026-1022
+Vendor: mekong-packaging
+Description: 400 kraft coffee bags, 250 g, one-way valve
+Amount: 320
+Account: VCB-0071-0042-118

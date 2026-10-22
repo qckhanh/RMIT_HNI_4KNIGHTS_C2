@@ -10,3 +10,6 @@ dist/
 infra/data/
 *.mv.db
 *.trace.db
+# Runtime state (synthetic demo data is rebuilt by using the app)
+backend/data/requests.json
+mockbank/data/ledger.json

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@tidecloak/react": "0.14.33",
+    "@tideorg/js": "0.14.29",
+    "heimdall-tide": "0.14.41",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
