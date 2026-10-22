@@ -1,0 +1,11 @@
+{
+  "name": "countersign",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "npm install --prefix backend && npm install --prefix mockbank && npm install --prefix frontend",
+    "dev": "node scripts/dev.mjs",
+    "dev:attest": "node scripts/dev.mjs --attest",
+    "check": "npm run check --prefix backend"
+  }
+}
