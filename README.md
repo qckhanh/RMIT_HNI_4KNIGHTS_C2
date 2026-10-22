@@ -4,6 +4,8 @@
 
 UNLOCKED · Challenge 2 · RMIT × Tide
 
+▶ **Presentation video (2 min):** [docs/countersign-presentation.mp4](docs/countersign-presentation.mp4)
+
 ## Project overview
 
 **Countersign is a dual-control expense desk where no admin, server or AI can move company money alone: approvals are tied to real Tide identities, approver roles are governed by a Tide quorum, and the bank can verify each payment itself.**
@@ -180,7 +182,7 @@ backend/    Express: JWT + DPoP verification, approval rules (src/payments.ts), 
 mockbank/   independent bank: ledger page, duplicate check, Tide signature verification
 infra/      TideCloak container and realm bootstrap
 scripts/    one-command dev runner (npm run dev / dev:attest)
-docs/       technical decisions and their sources
+docs/       technical decisions and their sources, presentation video
 ```
 
 ## Credits
