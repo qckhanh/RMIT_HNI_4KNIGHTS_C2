@@ -37,14 +37,16 @@ const ROLES = [
   'chief-accountant', 'deputy-chief-accountant', 'cfo', 'ceo', 'controller', 'cto',
   'dept-head:ops', 'dept-head:sales', 'ap-clerk', 'ap-agent',
 ];
-// Synthetic personas from the Countersign plan.
-const PERSONAS = [
+// Synthetic personas from the Countersign plan. The free-tier licence has 5 account seats and one was
+// lost to a failed enrolment on Tide's side, so `admin` also plays Linh (the clerk who raises requests).
+const USERS = [
+  { username: 'admin', firstName: 'Admin', lastName: 'User', email: EMAIL, roles: ['ap-clerk'] },
   { username: 'ha.tran', firstName: 'Hà', lastName: 'Trần', roles: ['chief-accountant'] },
   { username: 'minh.le', firstName: 'Minh', lastName: 'Lê', roles: ['cfo'] },
   { username: 'sarah.nguyen', firstName: 'Sarah', lastName: 'Nguyen', roles: ['dept-head:ops'] },
-  { username: 'linh.pham', firstName: 'Linh', lastName: 'Phạm', roles: ['ap-clerk'] },
 ];
-const ENROLLED = ['admin', ...PERSONAS.map((p) => p.username)];
+const DROPPED = ['linh.pham']; // created by earlier runs; removed so nobody waits on its enrolment
+const ENROLLED = USERS.map((u) => u.username);
 const NEVER_AUTO_APPROVE = new Set(['DISABLE_IGA', 'DELETE_REALM', 'OFFBOARD_REALM']);
 
 const die = (msg, code = 1) => { console.error(`ERROR: ${msg}`); process.exit(code); };
@@ -159,9 +161,14 @@ async function ensurePeople() {
   for (const name of ROLES) await api('POST', `/${REALM}/roles`, { json: { name } }); // 409 if it exists
   await drain();
 
+  for (const username of DROPPED) {
+    const user = await findUser(username);
+    if (user) { step(`Removing dropped user ${username}...`); await api('DELETE', `/${REALM}/users/${user.id}`); }
+  }
+  await drain();
+
   step(`Creating users: ${ENROLLED.join(', ')}...`);
-  const users = [{ username: 'admin', firstName: 'Admin', lastName: 'User', email: EMAIL }, ...PERSONAS];
-  for (const u of users) {
+  for (const u of USERS) {
     if (await findUser(u.username)) continue;
     const res = await api('POST', `/${REALM}/users`, {
       json: {
@@ -174,7 +181,7 @@ async function ensurePeople() {
   await drain();
 
   step('Assigning persona roles...');
-  for (const p of PERSONAS) {
+  for (const p of USERS) {
     const user = await findUser(p.username);
     if (!user) die(`user '${p.username}' not found after creation (change request not committed?)`);
     const reps = [];

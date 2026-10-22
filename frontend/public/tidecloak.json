@@ -8,27 +8,27 @@
   "jwk": {
     "keys": [
       {
-        "kid": "2DIq0_1gRG-z2SXxYyfhrf1BcbJS7vs74o0-5EkNnk0",
+        "kid": "GbefGNAr3maKAh_GMWPiDovYzKghslMCCZQm8oOg6ZA",
         "kty": "OKP",
         "alg": "EdDSA",
         "use": "sig",
         "crv": "Ed25519",
-        "x": "wyIlTBqPjtXT5-wz2WgXlhAE6vhNRtMxrwBYiNBLwvs"
+        "x": "w086zOY4dxOYdq8Wx3b9HeG7WL-jXHFRpWqenW4ril0"
       }
     ]
   },
   "backgroundUrl": "http://localhost:8080/realms/countersign/tide-idp-resources/images/BACKGROUND_IMAGE",
   "logoUrl": "http://localhost:8080/realms/countersign/tide-idp-resources/images/LOGO",
   "homeOrkUrl": "https://ork1.tideprotocol.com",
-  "vendorId": "100f5bfc-e988-4a59-9a0b-4d557f4cfbd1",
-  "client-origin-auth-http://localhost:8080": "8oF+pif1MDYGjhgDxBpHUSbROZDWmhH0DXn7FAjSfr1Jo9qNXcVyyPOOQtkwnTU3op6+TUzNdMBUJarHFJHhCw==",
-  "client-origin-auth-http://localhost:5173": "dshIQd2ZZ9Hh0gCjhd6ZJb1+GVTaAmqFdggZSylffM5dfwWh3aYZ7BVqclSoPtoTIKPcJ1NFsMzWHJNYmzWWAQ==",
-  "gVVK": "C322254C1A8F8ED5D3E7EC33D96817961004EAF84D46D331AF005888D04BC2FB",
-  "vvkId": "100f5bfc-e988-4a59-9a0b-4d557f4cfbd1",
+  "vendorId": "df606737-f78c-4fc0-ad23-d431bfc7ee6a",
+  "client-origin-auth-http://localhost:8080": "XG2Sy64xRRH1pXl7QPjUzRO0hxEFkNYAYotDnt+UwFN6m/hxKzwdXOHodJpc7ScivL5VtMqY8Ebut2F7EAwlAw==",
+  "client-origin-auth-http://localhost:5173": "G/4mLXb7JhQLwiOJEdOvSP1uUwpKvTcFurlVNn1W+PqgIJhSwXDxbaJt/uySvQaoX2Mc5v/PkU00lnJwN72SDQ==",
+  "gVVK": "C34F3ACCE63877139876AF16C776FD1DE1BB58BFA35C7151A56A9E9D6E2B8A5D",
+  "vvkId": "df606737-f78c-4fc0-ad23-d431bfc7ee6a",
   "orkUrl": "https://ork1.tideprotocol.com",
   "payerPublic": "200000b967a7799ffd4476e1074777ebc83bec23a3843cb2e5ca43c83561802c8e646b",
-  "obfGVVK": "C322254C1A8F8ED5D3E7EC33D96817961004EAF84D46D331AF005888D04BC2FB",
-  "gVRKCertificate": "8UVZcR30kTS5j56ziKj0HHELNhdVfd4rIOGQIUTfmdK12DUzrIy8aZlJelN6zeSzQ3gtKZf2nZgMRpf/TmvFDg==",
+  "obfGVVK": "C34F3ACCE63877139876AF16C776FD1DE1BB58BFA35C7151A56A9E9D6E2B8A5D",
+  "gVRKCertificate": "s1u6hu2gB/oP+ggOYW5QrxNoIbQP9kvBMdLU3bQwnmx2uWYaRZEvEAgoEdFG+iokKdGEsMv8Rwa7sEFVCKctDQ==",
   "thresholdT": 14,
   "thresholdN": 20
 }
