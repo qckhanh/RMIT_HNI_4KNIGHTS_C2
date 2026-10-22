@@ -107,6 +107,15 @@ function Desk() {
     refresh()
   }
 
+  // Demo helper: the test cases from plan B, raised through the normal API under the clerk's login.
+  async function seedDemo() {
+    const packaging = vendors.find((v) => v.id === 'mekong-packaging')
+    if (!packaging) return setMessage('Chưa tải được danh sách nhà cung cấp')
+    await act('/penny/run')
+    await act('/requests', { vendorId: packaging.id, account: packaging.account, amount: 5000, purpose: 'Thùng carton xuất khẩu (T1)' })
+    await act('/requests', { vendorId: packaging.id, account: packaging.account, amount: 15000, purpose: 'Máy đóng gói (T2)' }, 'Đã tạo: Penny $320 (+ hoá đơn độc bị chặn), $5.000 (T1), $15.000 (T2).')
+  }
+
   // Hướng 2: approve the attestation in this user's Tide enclave, then hand the bytes to the backend.
   async function attest(r: PaymentRequest) {
     setMessage('Đang mở enclave Tide để ký chứng nhận…')
@@ -143,7 +152,10 @@ function Desk() {
         <section className="panel">
           <h2>Penny (AI kế toán — giả lập)</h2>
           <p className="muted">Penny đọc hoá đơn trong thư mục và đề xuất chi. Đề xuất của Penny đi qua đúng luật như mọi người.</p>
-          <div><button onClick={() => act('/penny/run', {}, 'Penny đã xử lý hoá đơn — xem danh sách bên dưới.')}>Cho Penny xử lý hoá đơn</button></div>
+          <div>
+            <button onClick={() => act('/penny/run', {}, 'Penny đã xử lý hoá đơn — xem danh sách bên dưới.')}>Cho Penny xử lý hoá đơn</button>{' '}
+            <button onClick={seedDemo} title="Penny + đề nghị $5.000 (T1) + $15.000 (T2)">Tạo sẵn các ca demo</button>
+          </div>
         </section>
       )}
       <NewRequest vendors={vendors} onSubmit={(body) => act('/requests', body, 'Đã tạo đề nghị chi.')} />
