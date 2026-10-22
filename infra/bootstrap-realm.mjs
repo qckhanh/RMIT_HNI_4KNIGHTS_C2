@@ -8,7 +8,7 @@
 // Usage:  node infra/bootstrap-realm.mjs            fresh realm
 //         node infra/bootstrap-realm.mjs --resume   realm exists: re-print invite links and continue
 //                                                   from "wait for enrolment"
-//         node infra/bootstrap-realm.mjs --export-only   sign IdP settings + export adapter, nothing else
+//         node infra/bootstrap-realm.mjs --export-only   re-export adapter + admin policy, nothing else
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -266,10 +266,10 @@ async function finish() {
   console.log(`\nBootstrap complete. Realm: ${REALM}  Client: ${CLIENT}  Adapter: ${path.relative(root, ADAPTER_OUTPUT)}`);
 }
 
-// --export-only: sign IdP settings and export the adapter without waiting for enrolment or flipping
-// the realm, so the app can be developed against the accounts linked so far.
+// --export-only: re-export the adapter and the realm admin policy (after admins change). It does not
+// touch IdP settings: those are signed once, before the realm flips to multiAdmin.
 if (process.argv.includes('--export-only')) {
-  await signIdpAndExport();
+  await exportAdapter();
   process.exit(0);
 }
 
