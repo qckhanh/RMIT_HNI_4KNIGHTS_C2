@@ -4,7 +4,7 @@
 
 UNLOCKED · Challenge 2 · RMIT × Tide
 
-▶ **Presentation video (2 min):** [docs/countersign-presentation.mp4](docs/countersign-presentation.mp4)
+▶ **Presentation video (2 min):** [docs/countersign-presentation.mp4](docs/countersign-presentation.mp4) or in youtube: https://youtu.be/zaio8Jf-Fhc
 
 ## Project overview
 
