@@ -1,0 +1,4 @@
+# The Tide enclave integrity-checks the DPoP relay page byte for byte: never convert its line endings.
+frontend/public/tide_dpop_auth.html -text
+# Bash scripts break with CRLF.
+*.sh text eol=lf
