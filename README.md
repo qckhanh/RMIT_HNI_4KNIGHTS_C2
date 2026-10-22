@@ -24,7 +24,7 @@
 | Approver-role governance (2 of 4 admins) | Real (TideCloak IGA). Verified: Sarah's self-granted `cfo` stayed at 1/2 and was denied by the CFO |
 | Approval rules T0–T2, one signature per role, no self-approval, vendor registry | Enforced by the Countersign backend (mode 1). `npm run check` covers them |
 | Bank verification of Tide signatures | Real crypto: MockBank verifies Ed25519 signatures with the realm key. Checked against the realm's own signed admin policy: missing, malformed, mismatched and tampered attestations are all refused |
-| Network-signed payment attestation (mode 2) | Implemented (Hà starts, another admin co-signs in their enclave). **Not yet run end-to-end on the Tide network** |
+| Network-signed payment attestation (mode 2) | Real, run end-to-end: the chief accountant and the CFO each approved in their own Tide enclave, the network signed only after the second approval (threshold 2), and MockBank accepted the order. Reusing that signature with another account, another amount, or the same order id was refused |
 | Penny, the AI accounts-payable agent | **Simulated**: fixed parsing rules, deliberately gullible |
 | MockBank | A stand-in bank running as its own process |
 | Data | Synthetic companies, people, vendors and invoices |

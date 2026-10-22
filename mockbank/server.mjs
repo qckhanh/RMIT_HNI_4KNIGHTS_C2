@@ -15,8 +15,10 @@ const save = () => fs.writeFileSync(LEDGER, JSON.stringify(ledger, null, 2) + '\
 
 function decide(order) {
   if (!order.orderId || !order.account || !(Number(order.amount) > 0)) return 'Lệnh thiếu thông tin';
+  // The Tide signature is the stronger reason, so it is reported first.
+  const attestationProblem = ATTESTATION_REQUIRED ? verifyAttestation(order) : null;
+  if (attestationProblem) return attestationProblem;
   if (ledger.some((e) => e.orderId === order.orderId && e.accepted)) return 'Lệnh trùng: mã lệnh này đã được thanh toán';
-  if (ATTESTATION_REQUIRED) return verifyAttestation(order);
   return null;
 }
 
