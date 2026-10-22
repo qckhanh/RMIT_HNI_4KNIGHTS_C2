@@ -143,10 +143,10 @@ Sign in with **Sign in with Tide**. For every test account, **the password is th
 
 | Username | Password | Role in the demo |
 |---|---|---|
-| `admin` | `admin` | AP clerk who raises requests (`ap-clerk`) + realm admin |
-| `ha.tran` | `ha.tran` | Chief accountant + realm admin |
-| `minh.le` | `minh.le` | CFO + realm admin |
-| `sarah.nguyen` | `sarah.nguyen` | Ops department head + realm admin |
+| `admin-test` | `admin-test` | AP clerk who raises requests (`ap-clerk`) + realm admin |
+| `hatran2` | `hatran2` | Chief accountant + realm admin |
+| `minhle` | `minhle` | CFO + realm admin |
+| `sarahnguyen` | `sarahnguyen` | Ops department head + realm admin |
 
 Use a separate browser profile (or a private window) for each account so the sessions don't mix. These are throwaway demo identities; they hold no real access anywhere else.
 
