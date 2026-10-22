@@ -1,4 +1,4 @@
-// Countersign approval rules (plan B "Luật duyệt"). Roles always come from a verified token;
+// Countersign approval rules (plan B approval rules). Roles always come from a verified token;
 // this module never trusts identity or roles passed in a request body.
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -6,7 +6,7 @@ import crypto from 'node:crypto';
 const DATA = new URL('../data/', import.meta.url);
 const REQUESTS_FILE = process.env.REQUESTS_FILE ?? new URL('requests.json', DATA); // override in payments.check.ts
 const MOCKBANK_URL = process.env.MOCKBANK_URL ?? 'http://localhost:4100';
-// Hướng 2: approved requests wait for a network-signed attestation before going to the bank.
+// Mode 2: approved requests wait for a network-signed attestation before going to the bank.
 export const ATTESTATION_REQUIRED = process.env.ATTESTATION_REQUIRED === 'true' || process.argv.includes('--attest');
 
 export type Tier = 'T0' | 'T1' | 'T2';
@@ -27,7 +27,7 @@ export type PaymentRequest = {
   approvals: Approval[];
   reason?: string; // why it was rejected (at creation, by an approver, or by the bank)
   createdAt: string;
-  // Hướng 2. The backend only relays these bytes; the bank verifies them against the Tide network key.
+  // Mode 2. The backend only relays these bytes; the bank verifies them against the Tide network key.
   attestation?: {
     signers: string[];
     pendingRequest?: string; // base64 Tide sign request carrying the approvals collected so far
@@ -62,7 +62,7 @@ export const listRequests = () => requests.map((r) => ({ ...r, missingRoles: mis
 
 function find(id: string): PaymentRequest {
   const req = requests.find((r) => r.id === id);
-  if (!req) throw new HttpError(404, 'Không tìm thấy đề nghị chi');
+  if (!req) throw new HttpError(404, 'Payment request not found');
   return req;
 }
 
@@ -70,7 +70,7 @@ type NewRequest = { vendorId?: unknown; account?: unknown; amount?: unknown; pur
 
 export function createRequest(input: NewRequest, requester: string, source: PaymentRequest['source']): PaymentRequest {
   const amount = Number(input.amount);
-  if (!Number.isFinite(amount) || amount <= 0) throw new HttpError(400, 'Số tiền không hợp lệ');
+  if (!Number.isFinite(amount) || amount <= 0) throw new HttpError(400, 'Invalid amount');
   const account = String(input.account ?? '').trim();
   const vendor = vendors.find((v) => v.id === input.vendorId);
 
@@ -91,9 +91,9 @@ export function createRequest(input: NewRequest, requester: string, source: Paym
 
   // Money only goes to an account already verified in the Vendor Registry.
   const blocked = !vendor
-    ? 'Nhà cung cấp chưa có trong danh sách đã xác minh'
+    ? 'Vendor is not in the verified vendor registry'
     : account !== vendor.account
-      ? `Tài khoản ${account} không phải tài khoản đã xác minh của ${vendor.name}`
+      ? `Account ${account} is not the verified account for ${vendor.name}`
       : null;
   if (blocked) Object.assign(req, { status: 'rejected', reason: blocked });
 
@@ -105,13 +105,13 @@ export function createRequest(input: NewRequest, requester: string, source: Paym
 
 export async function approveRequest(id: string, username: string, roles: string[]): Promise<PaymentRequest> {
   const req = find(id);
-  if (req.status !== 'pending') throw new HttpError(409, 'Đề nghị này không còn chờ duyệt');
-  if (req.requester === username) throw new HttpError(403, 'Không được duyệt đề nghị của chính mình');
-  if (req.approvals.some((a) => a.username === username)) throw new HttpError(403, 'Mỗi người chỉ ký một lần trên một đề nghị');
+  if (req.status !== 'pending') throw new HttpError(409, 'This request is no longer awaiting approval');
+  if (req.requester === username) throw new HttpError(403, "You can't approve your own request");
+  if (req.approvals.some((a) => a.username === username)) throw new HttpError(403, 'Each person can sign a request only once');
 
   const missing = missingRoles(req);
   const role = missing.find((r) => roles.includes(r));
-  if (!role) throw new HttpError(403, `Bạn không giữ role còn thiếu cho đề nghị này (cần: ${missing.join(', ')})`);
+  if (!role) throw new HttpError(403, `You don't hold a role this request still needs (needs: ${missing.join(', ')})`);
 
   req.approvals.push({ username, role, at: new Date().toISOString() });
   if (missingRoles(req).length === 0) req.status = 'approved';
@@ -120,17 +120,17 @@ export async function approveRequest(id: string, username: string, roles: string
   return req;
 }
 
-// Hướng 2: the chief accountant starts the attestation, other realm admins co-sign in their own
+// Mode 2: the chief accountant starts the attestation, other realm admins co-sign in their own
 // enclave until the Tide network signs. The backend cannot forge any of this: it stores bytes.
 type AttestationStep = { pendingRequest?: unknown; policy?: unknown };
 
 export async function recordAttestation(id: string, username: string, roles: string[], step: AttestationStep): Promise<PaymentRequest> {
   const req = find(id);
-  if (req.status !== 'approved') throw new HttpError(409, 'Chỉ ký chứng nhận cho đề nghị đã đủ chữ ký duyệt');
-  if (req.attestation?.policy) throw new HttpError(409, 'Đề nghị này đã có chứng nhận');
+  if (req.status !== 'approved') throw new HttpError(409, 'Only fully approved requests can be attested');
+  if (req.attestation?.policy) throw new HttpError(409, 'This request is already attested');
   const signers = req.attestation?.signers ?? [];
-  if (!signers.length && !roles.includes('chief-accountant')) throw new HttpError(403, 'Kế toán trưởng phải ký chứng nhận đầu tiên');
-  if (signers.includes(username)) throw new HttpError(403, 'Bạn đã ký chứng nhận này rồi');
+  if (!signers.length && !roles.includes('chief-accountant')) throw new HttpError(403, 'The chief accountant must sign the attestation first');
+  if (signers.includes(username)) throw new HttpError(403, "You've already signed this attestation");
 
   req.attestation = {
     signers: [...signers, username],
@@ -142,8 +142,8 @@ export async function recordAttestation(id: string, username: string, roles: str
   return req;
 }
 
-// DEMO ONLY: "Tuấn" has the server. He reuses a real attestation to send the money elsewhere,
-// skipping every rule. With Hướng 1 the bank cannot tell; with Hướng 2 the signature gives him away.
+// DEMO ONLY: Someone who owns the server. He reuses a real attestation to send the money elsewhere,
+// skipping every rule. With Mode 1 the bank cannot tell; with Mode 2 the signature gives him away.
 export async function tamper(id: string): Promise<{ accepted?: boolean; reason?: string }> {
   const req = find(id);
   const forged = { orderId: `${req.id}-X`, vendorId: req.vendorId, account: '9999-0000', amount: req.amount, attestation: req.attestation?.policy };
@@ -153,18 +153,18 @@ export async function tamper(id: string): Promise<{ accepted?: boolean; reason?:
 
 export function rejectRequest(id: string, username: string, roles: string[]): PaymentRequest {
   const req = find(id);
-  if (req.status !== 'pending') throw new HttpError(409, 'Đề nghị này không còn chờ duyệt');
-  if (req.requester === username) throw new HttpError(403, 'Người tạo không tự từ chối được; hãy để người duyệt quyết định');
-  if (!REQUIRED[req.tier].some((r) => roles.includes(r))) throw new HttpError(403, 'Bạn không phải người duyệt của đề nghị này');
-  Object.assign(req, { status: 'rejected', reason: `Bị ${username} từ chối` });
+  if (req.status !== 'pending') throw new HttpError(409, 'This request is no longer awaiting approval');
+  if (req.requester === username) throw new HttpError(403, "The requester can't reject their own request; leave it to the approvers");
+  if (!REQUIRED[req.tier].some((r) => roles.includes(r))) throw new HttpError(403, "You're not an approver for this request");
+  Object.assign(req, { status: 'rejected', reason: `Rejected by ${username}` });
   save();
   return req;
 }
 
-// Hướng 1: the bank trusts this backend. The README states this limit plainly.
+// Mode 1: the bank trusts this backend. The README states this limit plainly.
 export async function sendToBank(req: PaymentRequest): Promise<PaymentRequest> {
   if (req.status !== 'approved' && req.status !== 'sent' && req.status !== 'bank_rejected') {
-    throw new HttpError(409, 'Chỉ gửi được đề nghị đã đủ chữ ký');
+    throw new HttpError(409, 'Only fully approved requests can be sent');
   }
   try {
     const res = await fetch(`${MOCKBANK_URL}/orders`, {
@@ -174,9 +174,9 @@ export async function sendToBank(req: PaymentRequest): Promise<PaymentRequest> {
     });
     const body = (await res.json().catch(() => ({}))) as { accepted?: boolean; reason?: string };
     if (body.accepted) Object.assign(req, { status: 'sent', reason: undefined });
-    else Object.assign(req, { status: 'bank_rejected', reason: `Ngân hàng từ chối: ${body.reason ?? res.status}` });
+    else Object.assign(req, { status: 'bank_rejected', reason: `Bank refused: ${body.reason ?? res.status}` });
   } catch {
-    Object.assign(req, { status: 'approved', reason: 'Chưa gửi được tới ngân hàng (MockBank không chạy?)' });
+    Object.assign(req, { status: 'approved', reason: "Couldn't reach the bank (is MockBank running?)" });
   }
   save();
   return req;

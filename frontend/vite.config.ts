@@ -1,4 +1,6 @@
+import path from 'node:path'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, type Connect, type Plugin } from 'vite'
 
 // The Tide enclave loads the DPoP relay at /tide_dpop/iss/<hex>/aud/<hex>/tide_dpop_auth.html.
@@ -21,5 +23,6 @@ const tideDpopRelay: Plugin = {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tideDpopRelay, react()],
+  plugins: [tideDpopRelay, react(), tailwindcss()],
+  resolve: { alias: { '@': path.resolve(import.meta.dirname, './src') } },
 })

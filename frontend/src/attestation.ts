@@ -1,4 +1,4 @@
-// Hướng 2: a payment attestation signed by the Tide network. Adapted from the Tide pack helper
+// Mode 2: a payment attestation signed by the Tide network. Adapted from the Tide pack helper
 // templates/relationship-attestation/relationship.ts (RelationshipAttestation:1, built into the ORKs).
 //
 // The attestation is a Tide policy whose `assignmentId` is the SHA-256 of the exact order. It is
@@ -21,7 +21,7 @@ interface TideClient {
 
 const tc = () => {
   const client = (IAMService as unknown as { _tc: TideClient | null })._tc
-  if (!client) throw new Error('TideCloak chưa khởi tạo')
+  if (!client) throw new Error('TideCloak is not initialised')
   return client
 }
 const toBase64 = (b: Uint8Array) => btoa(Array.from(b, (c) => String.fromCharCode(c)).join(''))
@@ -59,7 +59,7 @@ function buildPolicy(assignmentId: string) {
 async function approveAndMaybeSign(initialised: Uint8Array, policy: InstanceType<typeof Models.Policy>): Promise<AttestationStep> {
   const id = Models.BaseTideRequest.decode(initialised).getUniqueId()
   const [approval] = await tc().requestTideOperatorApproval([{ id, request: initialised }])
-  if (!approval || approval.status !== 'approved') throw new Error(`Chưa được duyệt trong enclave (${approval?.status ?? 'không phản hồi'})`)
+  if (!approval || approval.status !== 'approved') throw new Error(`Not approved in the enclave (${approval?.status ?? 'no response'})`)
 
   const approved = Models.BaseTideRequest.decode(approval.request)
   const admin = await adminPolicy()
@@ -68,7 +68,7 @@ async function approveAndMaybeSign(initialised: Uint8Array, policy: InstanceType
 
   approved.addPolicy(admin)
   const [signature] = await tc().executeSignRequest(approved.encode(), true)
-  if (!signature) throw new Error('Mạng Tide không trả về chữ ký')
+  if (!signature) throw new Error('The Tide network returned no signature')
   policy.signature = signature
   return { policy: toBase64(policy.toBytes()) }
 }

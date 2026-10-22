@@ -1,5 +1,5 @@
 // Start backend (:4000), MockBank (:4100) and frontend (:5173) together. TideCloak runs in Docker
-// (infra/start-tidecloak.sh). Pass --attest for Hướng 2: approved payments wait for a
+// (infra/start-tidecloak.sh). Pass --attest for Mode 2: approved payments wait for a
 // network-signed attestation and MockBank refuses anything without one.
 import { spawn } from 'node:child_process';
 
@@ -19,5 +19,5 @@ const children = services.map(([name, cwd, script]) => {
   return child;
 });
 
-console.log(`Countersign ${attest ? '(Hướng 2: attestation required)' : '(Hướng 1)'} — app http://localhost:5173 · bank http://localhost:4100`);
+console.log(`Countersign ${attest ? '(Mode 2: attestation required)' : '(Mode 1)'} — app http://localhost:5173 · bank http://localhost:4100`);
 process.on('SIGINT', () => { children.forEach((c) => c.kill()); process.exit(0); });

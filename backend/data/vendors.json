@@ -2,5 +2,5 @@
   { "id": "mekong-packaging", "name": "Mekong Packaging Co.", "account": "VCB-0071-0042-118" },
   { "id": "dalat-green-beans", "name": "Da Lat Green Beans Coop", "account": "ACB-2208-1977-503" },
   { "id": "saigon-freight", "name": "Saigon Freight Logistics", "account": "TCB-1903-5567-220" },
-  { "id": "tokyo-beans", "name": "Tokyo Beans K.K. (hoàn tiền)", "account": "MUFG-4410-2290-077" }
+  { "id": "tokyo-beans", "name": "Tokyo Beans K.K. (refunds)", "account": "MUFG-4410-2290-077" }
 ]

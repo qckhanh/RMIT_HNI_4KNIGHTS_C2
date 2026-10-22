@@ -59,14 +59,14 @@ app.post('/requests/:id/attestation', requireAuth, async (req, res) => {
   res.json(await recordAttestation(String(req.params.id), username(req), roles(req), req.body ?? {}));
 });
 
-// DEMO ONLY: the compromised-server scene ("Tuấn"). Kept visible on purpose.
+// DEMO ONLY: the compromised-server scene. Kept visible on purpose.
 app.post('/demo/tamper/:id', requireAuth, async (req, res) => {
   res.json(await tamper(String(req.params.id)));
 });
 
 // Penny proposes on behalf of the clerk who runs it.
 app.post('/penny/run', requireAuth, (req, res) => {
-  if (!roles(req).includes('ap-clerk')) throw new HttpError(403, 'Chỉ kế toán (ap-clerk) mới chạy được Penny');
+  if (!roles(req).includes('ap-clerk')) throw new HttpError(403, 'Only the AP clerk can run Penny');
   res.json(runPenny());
 });
 
@@ -76,7 +76,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     return;
   }
   console.error(err);
-  res.status(500).json({ error: 'Lỗi máy chủ' });
+  res.status(500).json({ error: 'Server error' });
 });
 
 app.listen(PORT, () => console.log(`countersign backend on http://localhost:${PORT}`));

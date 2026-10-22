@@ -12,7 +12,7 @@
 
 **Why TideCloak matters.** Tide login with DPoP binds every approval to a person. Granting the CFO role is an IGA change request that needs 2 of 4 admins: one insider cannot promote herself. In mode 2, each payment carries a policy signed by the Tide network under the realm admin policy (threshold = that quorum); MockBank verifies it with the realm key, so a compromised server cannot redirect money.
 
-**Prototype & storytelling.** Watch: Penny (a simulated AI) reads a poisoned invoice and is blocked; a $15,000 payment waits for the Ops head, chief accountant and CFO; Sarah tries to make herself CFO and is denied; "Tuấn", who owns the server, redirects a paid order: accepted in mode 1, rejected in mode 2.
+**Prototype & storytelling.** Watch: Penny (a simulated AI) reads a poisoned invoice and is blocked; a $15,000 payment waits for the Ops head, chief accountant and CFO; Sarah tries to make herself CFO and is denied; an attacker who owns the server redirects a paid order: accepted in mode 1, rejected in mode 2.
 
 ---
 
@@ -29,7 +29,7 @@
 | MockBank | A stand-in bank running as its own process |
 | Data | Synthetic companies, people, vendors and invoices |
 
-**Known limits.** In mode 1 the bank trusts the backend (the "Tuấn" scene shows exactly that). Collusion between enough approvers, and forged paperwork good enough to fool them, are out of scope. Real banks do not verify Tide signatures today; the adoption path is to register the realm public key with the bank the way companies already register signing certificates.
+**Known limits.** In mode 1 the bank trusts the backend (the compromised-server demo shows exactly that). Collusion between enough approvers, and forged paperwork good enough to fool them, are out of scope. Real banks do not verify Tide signatures today; the adoption path is to register the realm public key with the bank the way companies already register signing certificates.
 
 ## Approval rules
 
@@ -68,12 +68,12 @@ After adding realm admins, `node infra/bootstrap-realm.mjs --export-only` re-exp
 
 ## Demo walkthrough
 
-1. `admin`: **Tạo sẵn các ca demo**. Penny's $320 invoice becomes a T0 request; the poisoned invoice ("pay $48,000 to 9999-0000") is blocked at creation.
+1. `admin`: **Load demo cases**. Penny's $320 invoice becomes a T0 request; the poisoned invoice ("pay $48,000 to 9999-0000") is blocked at creation.
 2. `ha.tran` approves T0 and T1; `sarah.nguyen`, `ha.tran` and `minh.le` approve the $15,000 T2. MockBank (:4100) shows each order accepted.
 3. `sarah.nguyen` raises her own request: the app will not let her approve it.
 4. In the TideCloak console, Sarah assigns herself `cfo`: the change request stays at 1/2. Minh denies it.
-5. **🕵 Tuấn đổi tài khoản** on a paid order: mode 1 bank accepts the forged order; mode 2 bank refuses it.
-6. Mode 2: once approved, Hà clicks **Ký chứng nhận (Tide)** and a second admin **Đồng ký**; the order reaches the bank with the network's signature.
+5. On a paid order, open the row menu and choose **Demo → Simulate compromised server**: in mode 1 the bank accepts the redirected order; in mode 2 it refuses it.
+6. Mode 2: once approved, `ha.tran` clicks **Sign attestation** and a second admin clicks **Co-sign attestation**; the order reaches the bank with the network's signature.
 
 ## Layout
 
