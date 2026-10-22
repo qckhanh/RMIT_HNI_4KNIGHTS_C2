@@ -10,6 +10,7 @@ const PORT = Number(process.env.PORT ?? 4100);
 const LEDGER = new URL('./data/ledger.json', import.meta.url);
 const ATTESTATION_REQUIRED = process.env.ATTESTATION_REQUIRED === 'true' || process.argv.includes('--attest');
 
+fs.mkdirSync(new URL('./data/', import.meta.url), { recursive: true }); // data/ is gitignored, absent in a fresh clone
 let ledger = fs.existsSync(LEDGER) ? JSON.parse(fs.readFileSync(LEDGER, 'utf8')) : [];
 const save = () => fs.writeFileSync(LEDGER, JSON.stringify(ledger, null, 2) + '\n');
 
