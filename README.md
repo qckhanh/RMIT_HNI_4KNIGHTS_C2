@@ -3,7 +3,7 @@
 **Payments no one can move alone.** A dual-control expense desk where every approval is signed with a real Tide identity, approver roles are governed by a Tide quorum, and the bank verifies the Tide network's signature itself, so not even our own server can redirect money.
 
 UNLOCKED · Challenge 2 · RMIT × Tide
-
+Live demo at: https://tide.solve.vn
 ▶ **Presentation video (2 min):** [docs/countersign-presentation.mp4](docs/countersign-presentation.mp4) or in youtube: https://youtu.be/zaio8Jf-Fhc
 
 ## Project overview
